@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eternum — Sistema Integral de Gestión Funeraria</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #C9A84C;
+            --gold-light: #E0C878;
+            --gold-dark: #8B7332;
+            --gold-glow: #D4AF37;
+            --black: #0a0a0a;
+            --black-soft: #111111;
+            --black-card: #181818;
+            --black-lighter: #1e1e1e;
+            --white: #f0ece4;
+            --white-pure: #ffffff;
+            --gray: #b0a99a;
+            --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: var(--gold-dark) var(--black);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--black);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold-dark);
+            border-radius: 10px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--black);
+            color: var(--white);
+            overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* === PARTÍCULAS DORADAS === */
+        #particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--gold-glow);
+            pointer-events: none;
+            animation: floatUp linear infinite;
+            opacity: 0;
+            box-shadow: 0 0 6px 2px rgba(212, 175, 55, 0.5);
+        }
+        @keyframes floatUp {
+            0% {
+                transform: translateY(105vh) scale(0);
+                opacity: 0;
+            }
+            5% {
+                opacity: 0.8;
+            }
+            15% {
+                transform: translateY(80vh) translateX(10px) scale(1);
+                opacity: 0.6;
+            }
+            40% {
+                opacity: 0.3;
+            }
+            80% {
+                opacity: 0.05;
+            }
+            100% {
+                transform: translateY(-10vh) translateX(-20px) scale(0.2);
+                opacity: 0;
+            }
+        }
+
+        /* === CONTENEDOR PRINCIPAL === */
+        .main-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* === NAVBAR === */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1.2rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all var(--transition);
+            background: transparent;
+        }
+        .navbar.scrolled {
+            background: rgba(10, 10, 10, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0.8rem 3rem;
+            border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+        .navbar .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+            z-index: 1001;
+        }
+        .navbar .logo-icon {
+            width: 42px;
+            height: 42px;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(201, 168, 76, 0.08);
+            transition: all var(--transition);
+        }
+        .navbar .logo-icon svg {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: var(--gold);
+            stroke-width: 1.5;
+        }
+        .navbar .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--gold-light);
+            letter-spacing: 0.04em;
+            transition: color var(--transition);
+        }
+        .navbar:hover .logo-icon {
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
+            border-color: var(--gold-light);
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 400;
+            letter-spacing: 0.03em;
+            transition: color var(--transition);
+            position: relative;
+            padding: 0.3rem 0;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1.5px;
+            background: var(--gold);
+            transition: width var(--transition);
+        }
+        .nav-links a:hover {
+            color: var(--gold-light);
+        }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        .nav-cta {
+            background: var(--gold);
+            color: var(--black) !important;
+            padding: 0.6rem 1.5rem !important;
+            border-radius: 30px;
+            font-weight: 600 !important;
+            letter-spacing: 0.02em;
+            transition: all var(--transition) !important;
+            border: 2px solid var(--gold);
+        }
+        .nav-cta:hover {
+            background: transparent !important;
+            color: var(--gold-light) !important;
+            box-shadow: 0 0 30px rgba(201, 168, 76, 0.35);
+        }
+        .nav-cta::after {
+            display: none !important;
+        }
+
+        /* Hamburguesa móvil */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            z-index: 1001;
+            background: none;
+            border: none;
+            padding: 8px;
+        }
+        .hamburger span {
+            display: block;
+            width: 28px;
+            height: 2px;
+            background: var(--gold);
+            transition: all var(--transition);
+            border-radius: 2px;
+        }
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* === HERO === */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 6rem 3rem 4rem;
+            text-align: center;
+            background: radial-gradient(ellipse at center, rgba(201, 168, 76, 0.06) 0%, transparent 70%),
+                radial-gradient(ellipse at 50% 80%, rgba(0, 0, 0, 0.9) 0%, var(--black) 100%);
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z' fill='none' stroke='rgba(201,168,76,0.03)' stroke-width='0.5'/%3E%3C/svg%3E") repeat;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 850px;
+        }
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.4rem;
+            border: 1px solid rgba(201, 168, 76, 0.5);
+            border-radius: 30px;
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+            color: var(--gold-light);
+            margin-bottom: 1.8rem;
+            background: rgba(201, 168, 76, 0.06);
+            animation: fadeInDown 1s ease forwards;
+        }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.8rem, 6vw, 5rem);
+            font-weight: 700;
+            color: var(--white-pure);
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.01em;
+            animation: fadeInUp 1s ease 0.2s forwards;
+            opacity: 0;
+        }
+        .hero h1 .gold-accent {
+            color: var(--gold-glow);
+            position: relative;
+        }
+        .hero h1 .gold-accent::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gold);
+            border-radius: 2px;
+            opacity: 0.5;
+        }
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--gray);
+            font-weight: 300;
+            margin-bottom: 2.5rem;
+            letter-spacing: 0.03em;
+            animation: fadeInUp 1s ease 0.4s forwards;
+            opacity: 0;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 1.2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease 0.6s forwards;
+            opacity: 0;
+        }
+        .btn {
+            padding: 0.9rem 2.2rem;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            cursor: pointer;
+            transition: all var(--transition);
+            text-decoration: none;
+            display: inline-block;
+            border: 2px solid transparent;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-gold {
+            background: var(--gold);
+            color: var(--black);
+            border-color: var(--gold);
+            box-shadow: 0 8px 30px rgba(201, 168, 76, 0.2);
+        }
+        .btn-gold:hover {
+            background: transparent;
+            color: var(--gold-light);
+            box-shadow: 0 12px 40px rgba(201, 168, 76, 0.35);
+            transform: translateY(-3px);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--white);
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+        .btn-outline:hover {
+            border-color: var(--gold);
+            color: var(--gold-light);
+            box-shadow: 0 0 25px rgba(201, 168, 76, 0.2);
+            transform: translateY(-3px);
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            animation: bounceDown 2s ease infinite;
+            z-index: 2;
+            cursor: pointer;
+        }
+        .scroll-indicator span {
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            color: var(--gray);
+        }
+        .scroll-indicator .line {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--gold), transparent);
+            border-radius: 2px;
+        }
+        @keyframes bounceDown {
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            50% {
+                transform: translateX(-50%) translateY(12px);
+            }
+        }
+
+        /* === SECCIONES === */
+        section {
+            padding: 6rem 3rem;
+            position: relative;
+            z-index: 1;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        .section-tag {
+            display: inline-block;
+            font-size: 0.78rem;
+            letter-spacing: 0.12em;
+            color: var(--gold-light);
+            text-transform: uppercase;
+            margin-bottom: 0.8rem;
+            font-weight: 500;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 3.5vw, 2.8rem);
+            font-weight: 600;
+            color: var(--white-pure);
+            letter-spacing: 0.02em;
+            margin-bottom: 1rem;
+        }
+        .section-divider {
+            width: 60px;
+            height: 2px;
+            background: var(--gold);
+            margin: 0 auto 1.5rem;
+            border-radius: 2px;
+        }
+        .section-desc {
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+            font-weight: 300;
+            font-size: 1.05rem;
+        }
+
+        /* === MÓDULOS === */
+        #modulos {
+            background: var(--black-soft);
+            position: relative;
+        }
+        #modulos::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at 30% 20%, rgba(201, 168, 76, 0.03) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-width: 1300px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        .module-card {
+            background: var(--black-card);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 2rem 1.8rem;
+            transition: all var(--transition);
+            cursor: default;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        .module-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 80% 10%, rgba(201, 168, 76, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            transition: opacity var(--transition);
+            opacity: 0;
+        }
+        .module-card:hover {
+            border-color: rgba(201, 168, 76, 0.4);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(201, 168, 76, 0.15) inset;
+            background: var(--black-lighter);
+        }
+        .module-card:hover::before {
+            opacity: 1;
+        }
+        .module-card .module-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: rgba(201, 168, 76, 0.2);
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            transition: all var(--transition);
+            pointer-events: none;
+        }
+        .module-card:hover .module-number {
+            color: rgba(201, 168, 76, 0.45);
+            transform: scale(1.1);
+        }
+        .module-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: rgba(201, 168, 76, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.2rem;
+            transition: all var(--transition);
+        }
+        .module-card:hover .module-icon {
+            background: rgba(201, 168, 76, 0.2);
+            box-shadow: 0 0 25px rgba(201, 168, 76, 0.25);
+        }
+        .module-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--gold-light);
+            fill: none;
+            stroke-width: 1.5;
+        }
+        .module-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--white-pure);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.02em;
+            position: relative;
+            z-index: 1;
+        }
+        .module-card p {
+            color: var(--gray);
+            font-size: 0.88rem;
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
+            font-weight: 300;
+        }
+
+        /* === BENEFICIOS === */
+        #beneficios {
+            background: var(--black);
+            position: relative;
+        }
+        .benefits-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            justify-content: center;
+        }
+        .benefit-item {
+            flex: 1 1 280px;
+            max-width: 340px;
+            text-align: center;
+            padding: 2.5rem 1.5rem;
+            border-radius: 16px;
+            background: var(--black-card);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all var(--transition);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        .benefit-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .benefit-item:hover {
+            border-color: rgba(201, 168, 76, 0.3);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            transform: translateY(-6px);
+        }
+        .benefit-icon-big {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        .benefit-item h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold-light);
+            margin-bottom: 0.6rem;
+            font-size: 1.3rem;
+        }
+        .benefit-item p {
+            color: var(--gray);
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+
+        /* === DASHBOARD PREVIEW === */
+        #dashboard-preview {
+            background: var(--black-soft);
+            text-align: center;
+            position: relative;
+        }
+        .dashboard-mockup {
+            max-width: 950px;
+            margin: 2rem auto 0;
+            border-radius: 20px;
+            border: 1px solid rgba(201, 168, 76, 0.2);
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(201, 168, 76, 0.1);
+            position: relative;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            background: #0d0d0d;
+        }
+        .dashboard-mockup.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .dashboard-mockup .mockup-header {
+            background: #1a1a1a;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .mockup-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .mockup-dot.red {
+            background: #e05;
+        }
+        .mockup-dot.yellow {
+            background: #ea0;
+        }
+        .mockup-dot.green {
+            background: #0c6;
+        }
+        .mockup-body {
+            padding: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+        .mockup-kpi {
+            background: #141414;
+            border-radius: 12px;
+            padding: 1.2rem 1.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            min-width: 120px;
+            transition: all var(--transition);
+        }
+        .mockup-kpi:hover {
+            border-color: rgba(201, 168, 76, 0.4);
+        }
+        .mockup-kpi .kpi-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--gold-light);
+            font-weight: 700;
+        }
+        .mockup-kpi .kpi-label {
+            font-size: 0.7rem;
+            color: var(--gray);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* === CTA FINAL === */
+        #cta-final {
+            background: radial-gradient(ellipse at center, rgba(201, 168, 76, 0.08) 0%, var(--black) 70%);
+            text-align: center;
+            padding: 7rem 2rem;
+            position: relative;
+        }
+        #cta-final .cta-box {
+            max-width: 650px;
+            margin: 0 auto;
+            background: var(--black-card);
+            border: 1px solid rgba(201, 168, 76, 0.25);
+            border-radius: 24px;
+            padding: 3.5rem 2.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        }
+        #cta-final .cta-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(201, 168, 76, 0.04), transparent, rgba(201, 168, 76, 0.04), transparent);
+            animation: spinGlow 12s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes spinGlow {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        #cta-final .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+        #cta-final h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 3vw, 2.4rem);
+            color: var(--white-pure);
+            margin-bottom: 1rem;
+        }
+        #cta-final p {
+            color: var(--gray);
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+        #cta-final .btn-gold {
+            font-size: 1rem;
+            padding: 1rem 2.8rem;
+        }
+
+        /* === FOOTER === */
+        footer {
+            background: var(--black-soft);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            padding: 2.5rem;
+            color: var(--gray);
+            font-size: 0.85rem;
+            letter-spacing: 0.03em;
+        }
+        footer span {
+            color: var(--gold-light);
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 900px) {
+            .navbar {
+                padding: 1rem 1.5rem;
+            }
+            .navbar.scrolled {
+                padding: 0.7rem 1.5rem;
+            }
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 280px;
+                height: 100vh;
+                background: rgba(10, 10, 10, 0.97);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                justify-content: center;
+                gap: 1.8rem;
+                transition: right var(--transition);
+                z-index: 1000;
+                border-left: 1px solid rgba(201, 168, 76, 0.15);
+            }
+            .nav-links.active {
+                right: 0;
+            }
+            .hamburger {
+                display: flex;
+            }
+            section {
+                padding: 4rem 1.5rem;
+            }
+            .hero {
+                padding: 5rem 1.5rem 3rem;
+                min-height: 90vh;
+            }
+            .modules-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .benefits-row {
+                flex-direction: column;
+                align-items: center;
+            }
+            .mockup-body {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas doradas -->
+    <div id="particles-container"></div>
+
+    <!-- Contenido principal -->
+    <div class="main-wrapper">
+        <!-- Navbar -->
+        <nav class="navbar" id="navbar">
+            <a href="#" class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="8" r="3"/>
+                        <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke-linecap="round"/>
+                        <line x1="12" y1="11" x2="12" y2="3" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <span class="logo-text">Eternum</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#modulos" onclick="closeMenu()">Módulos</a></li>
+                <li><a href="#beneficios" onclick="closeMenu()">Beneficios</a></li>
+                <li><a href="#dashboard-preview" onclick="closeMenu()">Dashboard</a></li>
+                <li><a href="#cta-final" class="nav-cta" onclick="closeMenu()">Solicitar Demo</a></li>
+            </ul>
+            <button class="hamburger" id="hamburger" aria-label="Menú">
+                <span></span><span></span><span></span>
+            </button>
+        </nav>
+
+        <!-- Hero -->
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <div class="hero-badge">✨ Gestión Funeraria Inteligente</div>
+                <h1>El alma de su funeraria <br><span class="gold-accent">merece Eternum</span></h1>
+                <p class="hero-subtitle">Un sistema integral que dignifica cada proceso. Desde la previsión hasta el descanso final, automatice, coordine y honre con excelencia.</p>
+                <div class="hero-buttons">
+                    <a href="#cta-final" class="btn btn-gold">Agendar una Demo</a>
+                    <a href="#modulos" class="btn btn-outline">Explorar Módulos</a>
+                </div>
+            </div>
+            <div class="scroll-indicator" onclick="document.getElementById('modulos').scrollIntoView({behavior:'smooth'})">
+                <span>DESCUBRIR</span>
+                <div class="line"></div>
+            </div>
+        </section>
+
+        <!-- Módulos -->
+        <section id="modulos">
+            <div class="section-header">
+                <div class="section-tag">Plataforma Completa</div>
+                <h2 class="section-title">13 Módulos Integrados</h2>
+                <div class="section-divider"></div>
+                <p class="section-desc">Cada pieza diseñada para que su funeraria opere con precisión, empatía y control absoluto.</p>
+            </div>
+            <div class="modules-grid" id="modulesGrid">
+                <!-- JS genera las cards -->
+            </div>
+        </section>
+
+        <!-- Beneficios -->
+        <section id="beneficios">
+            <div class="section-header">
+                <div class="section-tag">¿Por qué Eternum?</div>
+                <h2 class="section-title">Ventajas que trascienden</h2>
+                <div class="section-divider"></div>
+                <p class="section-desc">No es solo software, es la columna vertebral de una funeraria moderna.</p>
+            </div>
+            <div class="benefits-row" id="benefitsRow">
+                <!-- JS genera -->
+            </div>
+        </section>
+
+        <!-- Dashboard Preview -->
+        <section id="dashboard-preview">
+            <div class="section-header">
+                <div class="section-tag">Visualización en Tiempo Real</div>
+                <h2 class="section-title">Dashboard Inteligente</h2>
+                <div class="section-divider"></div>
+                <p class="section-desc">KPIs, trazabilidad y reportes que le permiten tomar decisiones con claridad.</p>
+            </div>
+            <div class="dashboard-mockup" id="dashboardMockup">
+                <div class="mockup-header">
+                    <span class="mockup-dot red"></span>
+                    <span class="mockup-dot yellow"></span>
+                    <span class="mockup-dot green"></span>
+                    <span style="color:#888;font-size:0.75rem;margin-left:0.5rem;">Eternum — Panel Principal</span>
+                </div>
+                <div class="mockup-body">
+                    <div class="mockup-kpi"><div class="kpi-value">24</div><div class="kpi-label">Servicios Activos</div></div>
+                    <div class="mockup-kpi"><div class="kpi-value">8</div><div class="kpi-label">Salas Reservadas</div></div>
+                    <div class="mockup-kpi"><div class="kpi-value">156</div><div class="kpi-label">Planes Vendidos</div></div>
+                    <div class="mockup-kpi"><div class="kpi-value">98%</div><div class="kpi-label">Satisfacción</div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Final -->
+        <section id="cta-final">
+            <div class="cta-box">
+                <div class="cta-content">
+                    <h2>Dé el paso hacia la eternidad digital</h2>
+                    <p>Agende una demostración personalizada y descubra cómo Eternum puede transformar la gestión de su funeraria en menos de 30 minutos.</p>
+                    <a href="#" class="btn btn-gold">Solicitar Demo Gratuita</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <p>&copy; 2026 <span>Eternum</span> — Sistema Integral de Gestión Funeraria. Todos los derechos reservados.</p>
+        </footer>
+    </div>
+
+    <script>
+        // === DATOS DE MÓDULOS ===
+        const modules = [
+            { num: '01', title: 'Clientes y Familias',
+                desc: 'Gestión completa del historial familiar, contactos y vínculos afectivos. Toda la información centralizada y segura.',
+                icon: 'users' },
+            { num: '02', title: 'Planes de Pre-necesidad',
+                desc: 'Configure y administre planes funerarios anticipados. Pagos, coberturas y renovaciones en un solo lugar.',
+                icon: 'shield' },
+            { num: '03', title: 'Servicios Funerarios',
+                desc: 'Coordinación integral del servicio: ceremonial, logística, personal asignado y cronograma detallado.',
+                icon: 'clipboard' },
+            { num: '04', title: 'Trazabilidad',
+                desc: 'Seguimiento completo del fallecido desde el ingreso hasta la disposición final. Código QR y registro de cada etapa.',
+                icon: 'map-pin' },
+            { num: '05', title: 'Salas y Capillas',
+                desc: 'Reserva y disponibilidad en tiempo real de salas de velación y capillas. Evite conflictos de agenda.',
+                icon: 'home' },
+            { num: '06', title: 'Vehículos',
+                desc: 'Administre carrozas fúnebres, vehículos de traslado y cortejos. Rutas, conductores y mantenimiento.',
+                icon: 'truck' },
+            { num: '07', title: 'Inventario',
+                desc: 'Control de ataúdes, urnas, productos químicos y suministros. Alertas de stock bajo y proveedores asociados.',
+                icon: 'package' },
+            { num: '08', title: 'Cotizador y Ventas',
+                desc: 'Cotizaciones rápidas, comparativas de paquetes y cierre de ventas con seguimiento de comisiones.',
+                icon: 'calculator' },
+            { num: '09', title: 'Contratos y Docs. Legales',
+                desc: 'Generación automática de contratos, consentimientos y documentación legal. Firmas digitales integradas.',
+                icon: 'file-text' },
+            { num: '10', title: 'Cementerio',
+                desc: 'Gestión de lotes, nichos, gavetas y bóvedas. Mapa interactivo del camposanto y vencimientos.',
+                icon: 'grid' },
+            { num: '11', title: 'Proveedores Externos',
+                desc: 'Coordinación con florerías, iglesias, músicos y catering. Órdenes de servicio y pagos centralizados.',
+                icon: 'link' },
+            { num: '12', title: 'Finanzas y Facturación',
+                desc: 'Facturación electrónica, cuentas por cobrar/pagar, conciliación bancaria y reportes fiscales.',
+                icon: 'dollar-sign' },
+            { num: '13', title: 'Reportes y Dashboard',
+                desc: 'Indicadores clave, tendencias, rentabilidad por servicio y dashboards personalizables en tiempo real.',
+                icon: 'bar-chart' }
+        ];
+
+        const benefits = [
+            { icon: '⚡', title: 'Velocidad Operativa', desc: 'Reduzca tiempos administrativos en un 70% con procesos automatizados y flujos inteligentes.' },
+            { icon: '🔒', title: 'Datos Protegidos', desc: 'Encriptación de grado bancario. La información de las familias está segura y respaldada.' },
+            { icon: '📱', title: 'Acceso Multiplataforma',
+                desc: 'Web, tablet y móvil. Consulte y opere desde cualquier lugar, incluso durante un servicio.' },
+            { icon: '🤝', title: 'Soporte Humanizado', desc: 'Entendemos el sector. Soporte 24/7 por personas que conocen la sensibilidad de su labor.' },
+            { icon: '📊', title: 'Decisiones con Datos', desc: 'Reportes que revelan tendencias, estacionalidad y rentabilidad para hacer crecer su funeraria.' },
+            { icon: '🕊️', title: 'Dignidad y Respeto', desc: 'Cada módulo está pensado para honrar a quienes partieron y acompañar a quienes quedan.' }
+        ];
+
+        // === GENERAR MÓDULOS ===
+        const modulesGrid = document.getElementById('modulesGrid');
+        modules.forEach((mod, index) => {
+            const card = document.createElement('div');
+            card.className = 'module-card';
+            card.style.transitionDelay = `${index * 0.04}s`;
+            card.innerHTML = `
+            <span class="module-number">${mod.num}</span>
+            <div class="module-icon">${getIconSVG(mod.icon)}</div>
+            <h3>${mod.title}</h3>
+            <p>${mod.desc}</p>
+          `;
+            modulesGrid.appendChild(card);
+        });
+
+        // === GENERAR BENEFICIOS ===
+        const benefitsRow = document.getElementById('benefitsRow');
+        benefits.forEach((b, index) => {
+            const item = document.createElement('div');
+            item.className = 'benefit-item';
+            item.style.transitionDelay = `${index * 0.06}s`;
+            item.innerHTML = `
+            <span class="benefit-icon-big">${b.icon}</span>
+            <h3>${b.title}</h3>
+            <p>${b.desc}</p>
+          `;
+            benefitsRow.appendChild(item);
+        });
+
+        // === ICONOS SVG SIMPLES ===
+        function getIconSVG(icon) {
+            const icons = {
+                'users': '<svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="7" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke-linecap="round"/><path d="M12 20c0-2.5 1.5-4.6 3.5-5.5" stroke-linecap="round"/></svg>',
+                'shield': '<svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5.5-3.8 10.7-8 12-4.2-1.3-8-6.5-8-12V6l8-4z" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+                'clipboard': '<svg viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h3a1 1 0 011 1v15a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1h3"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="13" y2="14"/></svg>',
+                'map-pin': '<svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="2.5"/><path d="M12 2C8.1 2 5 5.1 5 9c0 5.5 7 13 7 13s7-7.5 7-13c0-3.9-3.1-7-7-7z"/></svg>',
+                'home': '<svg viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v11a1 1 0 01-1 1H4a1 1 0 01-1-1V10z"/><line x1="9" y1="15" x2="15" y2="15"/></svg>',
+                'truck': '<svg viewBox="0 0 24 24"><rect x="2" y="4" width="15" height="11" rx="1"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/><line x1="17" y1="9" x2="21" y2="9"/><line x1="21" y1="5" x2="21" y2="13"/></svg>',
+                'package': '<svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
+                'calculator': '<svg viewBox="0 0 24 24"><rect x="3" y="2" width="18" height="20" rx="2"/><line x1="7" y1="7" x2="17" y2="7"/><circle cx="8" cy="11" r="1"/><circle cx="12" cy="11" r="1"/><circle cx="16" cy="11" r="1"/><circle cx="8" cy="15" r="1"/><circle cx="12" cy="15" r="1"/><circle cx="16" cy="15" r="1"/></svg>',
+                'file-text': '<svg viewBox="0 0 24 24"><path d="M14 2H6a1 1 0 00-1 1v18a1 1 0 001 1h12a1 1 0 001-1V8l-5-6z"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/><line x1="9" y1="18" x2="12" y2="18"/></svg>',
+                'grid': '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+                'link': '<svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="4"/><circle cx="17" cy="12" r="4"/><line x1="11" y1="12" x2="13" y2="12" stroke-width="2"/></svg>',
+                'dollar-sign': '<svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><path d="M16 5.5A4 4 0 008 7a4 4 0 000 6.5"/><path d="M8 18.5A4 4 0 0016 17a4 4 0 000-6.5"/></svg>',
+                'bar-chart': '<svg viewBox="0 0 24 24"><rect x="3" y="13" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="13" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg>'
+            };
+            return icons[icon] || icons['users'];
+        }
+
+        // === PARTÍCULAS ===
+        const particlesContainer = document.getElementById('particles-container');
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            const size = Math.random() * 4 + 1.5;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = Math.random() * 12 + 10 + 's';
+            particle.style.animationDelay = Math.random() * 8 + 's';
+            particlesContainer.appendChild(particle);
+            particle.addEventListener('animationend', () => {
+                particle.remove();
+                createParticle();
+            });
+        }
+        for (let i = 0; i < 35; i++) {
+            createParticle();
+        }
+
+        // === SCROLL: NAVBAR ===
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // === HAMBURGER MENU ===
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+        function closeMenu() {
+            hamburger.classList.remove('active');
+            navLinks.classList.remove('active');
+        }
+        document.addEventListener('click', (e) => {
+            if (!hamburger.contains(e.target) && !navLinks.contains(e.target)) {
+                closeMenu();
+            }
+        });
+
+        // === INTERSECTION OBSERVER PARA ANIMACIONES ===
+        const observerOptions = { threshold: 0.15, rootMargin: '0px 0px -40px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observar cards de módulos
+        document.querySelectorAll('.module-card').forEach(card => observer.observe(card));
+        // Observar beneficios
+        document.querySelectorAll('.benefit-item').forEach(item => observer.observe(item));
+        // Observar dashboard
+        const dashboardMockup = document.getElementById('dashboardMockup');
+        if (dashboardMockup) observer.observe(dashboardMockup);
+
+        // === SMOOTH SCROLL PARA LINKS CON OFFSET ===
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                const target = document.querySelector(targetId);
+                if (target) {
+                    e.preventDefault();
+                    const navHeight = navbar.offsetHeight + 20;
+                    const targetPosition = target.getBoundingClientRect().top + window.pageYOffset -
+                        navHeight;
+                    window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+                }
+            });
+        });
+
+        // === EFECTO HOVER DORADO EN HERO (sutil movimiento al mouse) ===
+        const hero = document.querySelector('.hero');
+        hero.addEventListener('mousemove', (e) => {
+            const rect = hero.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const moveX = (x - centerX) / centerX * 8;
+            const moveY = (y - centerY) / centerY * 8;
+            const heroContent = hero.querySelector('.hero-content');
+            if (heroContent) {
+                heroContent.style.transform = `translate(${moveX}px, ${moveY}px)`;
+                heroContent.style.transition = 'transform 0.15s ease-out';
+            }
+        });
+        hero.addEventListener('mouseleave', () => {
+            const heroContent = hero.querySelector('.hero-content');
+            if (heroContent) {
+                heroContent.style.transform = 'translate(0, 0)';
+                heroContent.style.transition = 'transform 0.6s ease-out';
+            }
+        });
+
+        console.log('%c✨ Eternum %c— Sistema Integral de Gestión Funeraria',
+            'color:#D4AF37;font-size:1.4em;font-weight:bold;', 'color:#b0a99a;');
+        console.log('%cDiseñado para honrar la vida con tecnología.', 'color:#C9A84C;font-style:italic;');
+    </script>
+</body>
+</html>
